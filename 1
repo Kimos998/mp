@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Réponses AI - Service Client Professionnel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            white-space: pre-wrap; /* يحافظ على تنسيق الفقرات والعودة للسطر */
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <h1>Générateur de Réponses Professionnelles avec AI</h1>
+    <textarea id="inputText" placeholder="Entrez ici les détails de la demande du client..."></textarea><br>
+    <button onclick="generateResponse()">Générer la Réponse AI</button>
+
+    <div id="result"></div>
+
+    <script>
+        const API_KEY = "AIzaSyCirF9n9PREyNH2XovnFpRPgIJdV003BTI";
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`;
+
+        async function generateResponse() {
+            const input = document.getElementById('inputText').value.trim();
+            const resultDiv = document.getElementById('result');
+
+            if (input === '') {
+                resultDiv.innerHTML = 'Veuillez entrer les détails de la demande.';
+                return;
+            }
+
+            resultDiv.innerHTML = 'Génération de la réponse...';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        contents: [
+                            {
+                                parts: [
+                                    {
+                                        text: `Générez une réponse professionnelle en français pour un client, en utilisant un ton poli et respectueux avec "vous". Organisez la réponse en plusieurs paragraphes bien structurés, avec des retours à la ligne clairs. Voici la demande du client : "${input}"`
+                                    }
+                                ]
+                            }
+                        ]
+                    })
+                });
+
+                const data = await response.json();
+                if (data.candidates && data.candidates.length > 0) {
+                    const generatedText = data.candidates[0].content.parts[0].text;
+
+                    // تحسين تنسيق الفقرات بإضافة فواصل أسطر إضافية
+                    const formattedText = generatedText.replace(/\n/g, '\n\n');
+
+                    resultDiv.innerHTML = formattedText;
+                } else {
+                    resultDiv.innerHTML = "Aucune réponse générée. Veuillez réessayer.";
+                }
+            } catch (error) {
+                console.error(error);
+                resultDiv.innerHTML = "Erreur lors de la génération de la réponse. Vérifiez votre connexion Internet ou votre clé API.";
+            }
+        }
+    </script>
+</body>
+</html>
