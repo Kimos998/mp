@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Réponse Téléphonique - Centre d'Appel</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f9f9f9; }
+        textarea { width: 100%; height: 100px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 10px 20px; margin-top: 10px; background-color: #007BFF; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        #result { margin-top: 20px; padding: 15px; background-color: #fff; border: 1px solid #ccc; border-radius: 4px; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>Réponse Téléphonique</h1>
+    <textarea id="inputText" placeholder="Entrez la demande du client..."></textarea><br>
+    <button onclick="generateResponse()">Générer</button>
+    <div id="result"></div>
+
+    <script>
+        const API_KEY = "AIzaSyCirF9n9PREyNH2XovnFpRPgIJdV003BTI";
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`;
+
+        async function generateResponse() {
+            const input = document.getElementById('inputText').value.trim();
+            const resultDiv = document.getElementById('result');
+            if (!input) { resultDiv.innerHTML = "Veuillez entrer la demande."; return; }
+
+            resultDiv.innerHTML = "Génération en cours...";
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: `Vous êtes en centre d’appel. Répondez de manière concise, fluide et professionnelle comme lors d’un appel téléphonique. Voici la demande : "${input}"` }] }]
+                    })
+                });
+
+                const data = await response.json();
+                resultDiv.innerHTML = data.candidates?.[0]?.content?.parts?.[0]?.text.replace(/\n/g, '\n\n') || "Erreur, veuillez réessayer.";
+            } catch (error) {
+                resultDiv.innerHTML = "Problème de connexion.";
+            }
+        }
+    </script>
+</body>
+</html>
