@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Réponses AI - Service Client Professionnel</title>
+    <title>Générateur de Réponses - Centre d'Appel</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -41,9 +41,9 @@
     </style>
 </head>
 <body>
-    <h1>Générateur de Réponses Professionnelles avec AI</h1>
-    <textarea id="inputText" placeholder="Entrez ici les détails de la demande du client..."></textarea><br>
-    <button onclick="generateResponse()">Générer la Réponse AI</button>
+    <h1>Générateur de Réponses - Centre d'Appel</h1>
+    <textarea id="inputText" placeholder="Décrivez la situation ou la demande du client..."></textarea><br>
+    <button onclick="generateResponse()">Générer la Réponse</button>
 
     <div id="result"></div>
 
@@ -73,7 +73,7 @@
                             {
                                 parts: [
                                     {
-                                        text: `Générez une réponse professionnelle en français pour un client, en utilisant un ton poli et respectueux avec "vous". Organisez la réponse en plusieurs paragraphes bien structurés, avec des retours à la ligne clairs. Voici la demande du client : "${input}"`
+                                        text: `Imaginez que vous êtes un conseiller clientèle en centre d'appel. Répondez de manière fluide et naturelle en français, en utilisant "vous" et en adoptant un ton courtois et professionnel. Structurez la réponse comme une conversation téléphonique. Voici la demande du client : "${input}"`
                                     }
                                 ]
                             }
@@ -85,7 +85,7 @@
                 if (data.candidates && data.candidates.length > 0) {
                     const generatedText = data.candidates[0].content.parts[0].text;
 
-                    // تحسين تنسيق الفقرات بإضافة فواصل أسطر إضافية
+                    // تحسين تنسيق المحادثة لجعلها طبيعية أكثر
                     const formattedText = generatedText.replace(/\n/g, '\n\n');
 
                     resultDiv.innerHTML = formattedText;
