@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>مُولِّد الردود الذكية</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 150px; /* زيادة ارتفاع مربع النص قليلاً */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>مُولِّد الردود الذكية</h1>
+    <textarea id="inputText" placeholder="أدخل طلب العميل هنا"></textarea><br>
+    <button onclick="generateResponse()">إنشاء الرد</button>
+    <div id="result"></div>
+
+    <script>
+        const API_KEY = "YOUR_API_KEY"; // استبدل هذا بمفتاح API الخاص بك
+        const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + API_KEY;
+
+        async function generateResponse() {
+            const input = document.getElementById('inputText').value.trim();
+            const resultDiv = document.getElementById('result');
+
+            if (input === '') {
+                resultDiv.innerHTML = 'الرجاء إدخال طلب العميل.';
+                return;
+            }
+
+            resultDiv.innerHTML = 'جاري إنشاء الرد...';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `أنشئ ردًا احترافيًا باللغة العربية للعميل بناءً على طلبه التالي: "${input}".  تجنب أي صيغ مجاملة غير ضرورية مثل "عزيزي العميل"، "مع خالص التقدير"، أو "شكراً لتعاونكم".  قم بتنظيم الرد في فقرات جيدة مع تعداد النقاط الهامة.`
+                            }]
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                if (data.candidates && data.candidates.length > 0) {
+                    let response = data.candidates[0].content.parts[0].text;
+
+                    // معالجة إضافية لتحسين التنسيق (اختياري)
+                    response = response.replace(/\n\n/g, "<br><br>"); // استبدال سطريْن فارغين بفاصل فقرة
+                    response = response.replace(/\* /g, "• "); // استبدال * بنقطة في بداية السطر
+
+                    resultDiv.innerHTML = response.trim();
+                } else {
+                    resultDiv.innerHTML = "لم يتم إنشاء أي رد. الرجاء المحاولة مرة أخرى.";
+                }
+            } catch (error) {
+                console.error(error);
+                resultDiv.innerHTML = "حدث خطأ أثناء إنشاء الرد. الرجاء التحقق من اتصالك بالإنترنت أو مفتاح API الخاص بك.";
+            }
+        }
+    </script>
+</body>
+</html>
